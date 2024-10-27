@@ -16,6 +16,10 @@ import { Image } from "astro:assets";
 
 const { collection: collectionSlug } = Astro.params;
 
+if (!collectionSlug) {
+  return Astro.redirect("/404");
+}
+
 const [collection, products] = await Promise.all([
   db.query.collectionsTable.findFirst({
     where: eq(schema.collectionsTable.slug, collectionSlug),
