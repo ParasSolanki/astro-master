@@ -1,0 +1,27 @@
+{
+  "version": "7",
+  "dialect": "sqlite",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "6",
+      "when": 1729694354801,
+      "tag": "0000_classy_surge",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1729694370443,
+      "tag": "0001_opposite_major_mapleleaf",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1730037121451,
+      "tag": "0002_third_lucky_pierre",
+      "breakpoints": true
+    }
+  ]
+}

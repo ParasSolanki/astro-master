@@ -1,0 +1,50 @@
+---
+import Layout from "./default.astro";
+import { db, schema } from "../server/db";
+import { asc } from "drizzle-orm";
+
+interface Props {
+  title: string;
+  description: string;
+  imageUrl?: string | null;
+}
+
+const { title, description, imageUrl } = Astro.props;
+
+const collections = await db
+  .select({
+    slug: schema.collectionsTable.slug,
+    name: schema.collectionsTable.name,
+  })
+  .from(schema.collectionsTable)
+  .orderBy(asc(schema.collectionsTable.name));
+---
+
+<Layout title={title} description={description} imageUrl={imageUrl}>
+  <div class="font-helvetica-roman flex flex-grow">
+    <aside class="hidden w-64 min-w-64 max-w-64 border-r p-4 md:block">
+      <h2
+        class="border-b border-green-800 text-sm font-semibold text-green-900"
+      >
+        Choose a Category
+      </h2>
+      <ul class="flex flex-col items-start justify-center">
+        {
+          collections.map((c) => (
+            <li class="w-full">
+              <a
+                href={`/${c.slug}`}
+                class="block w-full py-1 text-xs text-gray-800 hover:bg-yellow-100 hover:underline"
+              >
+                {c.name}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </aside>
+    <main class="overflow-y-auto p-4 pt-0" id="main-content">
+      <slot />
+    </main>
+  </div>
+</Layout>

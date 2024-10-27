@@ -1,0 +1,125 @@
+---
+import "../styles/global.css";
+import { ViewTransitions } from "astro:transitions";
+
+interface Props {
+  title: string;
+  description: string;
+}
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Not Found | AstroMaster</title>
+    <meta name="description" content="A page not found" />
+    <meta name="og:type" content="website" />
+    <meta name="og:title" content="Not Found | AstroMaster" />
+    <meta name="og:description" content="A page not found" />
+    <meta name="twitter:title" content="Not Found | AstroMaster" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:description" content="A page not found" />
+
+    <link
+      rel="dns-prefetch"
+      href="https://bevgyjm5apuichhj.public.blob.vercel-storage.com"
+    />
+    <ViewTransitions />
+  </head>
+  <body class="bg-background font-sans text-foreground antialiased">
+    <header
+      class="sticky top-0 z-10 flex flex-grow items-center justify-between gap-4 border-b-2 border-yellow-300 bg-background p-2 pb-[4px] pt-2 sm:flex-row sm:p-4 sm:pb-[4px] sm:pt-0"
+    >
+      <div class="flex flex-grow flex-col">
+        <div
+          class="flex w-full flex-col items-start justify-center gap-2 sm:w-auto sm:flex-row sm:items-center"
+        >
+          <a
+            href="/"
+            data-astro-prefetch
+            class="text-4xl font-bold text-slate-900"
+          >
+            AstroMaster
+          </a>
+          <div
+            class="items flex w-full flex-row items-center justify-between gap-4"
+          >
+            <div class="mx-0 flex-grow sm:mx-auto sm:flex-grow-0">
+              <input type="search" placeholder="search" />
+            </div>
+            <div class="flex flex-row justify-between space-x-4">
+              <div class="relative">
+                <a
+                  href="/order"
+                  data-astro-prefetch
+                  class="text-lg uppercase text-slate-900 hover:underline"
+                >
+                  Order
+                </a>
+              </div>
+              <a
+                href="/order-history"
+                data-astro-prefetch
+                class="hidden text-lg uppercase text-slate-900 hover:underline md:block"
+              >
+                Order history
+              </a>
+              <a
+                href="/order-history"
+                aria-label="Order History"
+                class="block text-lg text-slate-900 hover:underline md:hidden"
+              >
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <div class="flex flex-col items-center justify-center">
+        <h1 class="text-4xl font-bold text-slate-900">404</h1>
+        <p class="text-lg text-slate-900">Page not found</p>
+      </div>
+    </main>
+
+    <footer
+      class="sticky bottom-0 flex flex-col items-center justify-between space-y-2 border-t border-gray-400 bg-background px-4 text-sm sm:h-6 sm:flex-row sm:space-y-0"
+    >
+      <div
+        class="flex flex-wrap justify-center space-x-2 pt-2 sm:justify-start"
+      >
+        <span class="hover:bg-yellow-100 hover:underline">Home</span>
+        <span>|</span>
+        <span class="hover:bg-yellow-100 hover:underline"> Location </span>
+        <span>|</span>
+        <span class="hover:bg-yellow-100 hover:underline">Returns</span>
+        <span>|</span>
+        <span class="hover:bg-yellow-100 hover:underline">Careers</span>
+        <span>|</span>
+        <span class="hover:bg-yellow-100 hover:underline"> Mobile App </span>
+        <span>|</span>
+        <span class="hover:bg-yellow-100 hover:underline">
+          Solidworks Add-In
+        </span>
+        <span>|</span>
+        <span class="hover:bg-yellow-100 hover:underline">Help</span>
+        <span>|</span>
+        <span class="hover:bg-yellow-100 hover:underline"> Settings </span>
+      </div>
+      <div class="text-center sm:text-right">
+        By using this website, you agree to check out the{" "}
+        <a
+          href="https://github.com/parassolanki/astro-master"
+          class="font-bold hover:underline"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Source Code
+        </a>
+      </div>
+    </footer>
+  </body>
+</html>

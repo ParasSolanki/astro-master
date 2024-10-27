@@ -1,0 +1,132 @@
+---
+import CollectionLayout from "../../layouts/collections.astro";
+import { db, schema } from "../../server/db";
+import { eq, count } from "drizzle-orm";
+import { Image } from "astro:assets";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const categories = await db
+    .select({ slug: schema.categoriesTable.slug })
+    .from(schema.categoriesTable);
+  return categories.map((c) => ({
+    params: {
+      category: c.slug,
+    },
+  }));
+}
+
+const { category: categorySlug } = Astro.params;
+
+const [category, products] = await Promise.all([
+  db.query.categoriesTable.findFirst({
+    where: eq(schema.categoriesTable.slug, categorySlug),
+    columns: {
+      name: true,
+      slug: true,
+      imageUrl: true,
+    },
+    with: {
+      subcollections: {
+        columns: {
+          name: true,
+        },
+        with: {
+          subcategories: {
+            columns: {
+              name: true,
+              imageUrl: true,
+              slug: true,
+            },
+          },
+        },
+      },
+    },
+  }),
+  db
+    .select({ count: count() })
+    .from(schema.productsTable)
+    .leftJoin(
+      schema.subcategoriesTable,
+      eq(schema.productsTable.subcategorySlug, schema.subcategoriesTable.slug),
+    )
+    .leftJoin(
+      schema.subcollectionsTable,
+      eq(
+        schema.subcollectionsTable.id,
+        schema.subcategoriesTable.subcollectionId,
+      ),
+    )
+    .leftJoin(
+      schema.categoriesTable,
+      eq(schema.categoriesTable.slug, schema.subcollectionsTable.categorySlug),
+    )
+    .where(eq(schema.categoriesTable.slug, categorySlug)),
+]);
+
+const title = category?.name ? `${category.name} | AstroMaster` : "AstroMaster";
+const description = category?.name
+  ? `Subcategories of ${category.name} category`
+  : "AstroMaster";
+
+const productsCount = products.at(0)?.count ?? 0;
+---
+
+<CollectionLayout
+  title={title}
+  description={description}
+  imageUrl={category?.imageUrl}
+>
+  {!category && <div>Category not found</div>}
+  {
+    category && (
+      <div class="w-full p-4">
+        <div class="container p-4">
+          {productsCount && (
+            <h1 class="mb-2 border-b-2 text-sm font-bold">
+              {productsCount} {productsCount === 1 ? "Product" : "Products"}
+            </h1>
+          )}
+          <div class="space-y-4">
+            {category.subcollections &&
+              category.subcollections.map((sub) => (
+                <div>
+                  <h2 class="mb-2 border-b-2 text-lg font-semibold">
+                    {sub.name}
+                  </h2>
+                  <div class="flex flex-row flex-wrap gap-2">
+                    {sub.subcategories.map((subcat) => (
+                      <a
+                        data-astro-prefetch
+                        class="group flex h-full w-full flex-row gap-2 border px-4 py-2 hover:bg-gray-100 sm:w-[200px]"
+                        href={`/products/${category.slug}/${subcat.slug}`}
+                      >
+                        <div class="py-2">
+                          <Image
+                            loading="eager"
+                            decoding="sync"
+                            src={subcat.imageUrl ?? "/placeholder.svg"}
+                            alt={`A small picture of ${subcat.name}`}
+                            width={48}
+                            height={48}
+                            quality={65}
+                            class="h-12 w-12 flex-shrink-0 object-cover"
+                          />
+                        </div>
+                        <div class="flex h-16 flex-grow flex-col items-start py-2">
+                          <div class="text-sm font-medium text-gray-700 group-hover:underline">
+                            {subcat.name}
+                          </div>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                </div>
+              ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+</CollectionLayout>

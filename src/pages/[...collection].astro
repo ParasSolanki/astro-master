@@ -1,0 +1,107 @@
+---
+import { asc, eq, count } from "drizzle-orm";
+import CollectionLayout from "../layouts/collections.astro";
+import { db, schema } from "../server/db";
+import { Image } from "astro:assets";
+
+export const prerender = true;
+
+export async function getStaticPaths() {
+  const collections = await db
+    .select({ slug: schema.collectionsTable.slug })
+    .from(schema.collectionsTable);
+
+  return collections.map((c) => ({ params: { collection: c.slug } }));
+}
+
+const { collection: collectionSlug } = Astro.params;
+
+const [collection, products] = await Promise.all([
+  db.query.collectionsTable.findFirst({
+    where: eq(schema.collectionsTable.slug, collectionSlug),
+    columns: {
+      name: true,
+      slug: true,
+    },
+    with: {
+      categories: {
+        columns: {
+          name: true,
+          slug: true,
+          imageUrl: true,
+        },
+      },
+    },
+    orderBy: asc(schema.collectionsTable.name),
+  }),
+  db
+    .select({ count: count() })
+    .from(schema.productsTable)
+    .leftJoin(
+      schema.subcategoriesTable,
+      eq(schema.productsTable.subcategorySlug, schema.subcategoriesTable.slug),
+    )
+    .leftJoin(
+      schema.subcollectionsTable,
+      eq(
+        schema.subcollectionsTable.id,
+        schema.subcategoriesTable.subcollectionId,
+      ),
+    )
+    .leftJoin(
+      schema.categoriesTable,
+      eq(schema.categoriesTable.slug, schema.subcollectionsTable.categorySlug),
+    )
+    .leftJoin(
+      schema.collectionsTable,
+      eq(schema.collectionsTable.id, schema.categoriesTable.collectionId),
+    )
+    .where(eq(schema.collectionsTable.slug, collectionSlug)),
+]);
+
+const title = collection?.name
+  ? `${collection.name} | AstroMaster`
+  : "AstroMaster";
+const description = collection?.name
+  ? `Categories list of ${collection.name} collection`
+  : "AstroMaster";
+
+const productsCount = products.at(0)?.count ?? 0;
+---
+
+<CollectionLayout title={title} description={description}>
+  {!collection && <div>Collection not found</div>}
+  {
+    collection && (
+      <div class="w-full p-4">
+        <div class="mb-2 w-full flex-grow border-b-[1px] border-green-800 text-sm font-semibold text-black">
+          Explore {productsCount.toLocaleString()} products
+        </div>
+
+        <div>
+          <h2 class="text-xl font-semibold">{collection.name}</h2>
+          <div class="flex flex-row flex-wrap justify-center gap-2 border-b-2 py-4 sm:justify-start">
+            {collection.categories.map((c) => (
+              <a
+                href={`/products/${c.slug}`}
+                class="flex w-[125px] flex-col items-center text-center"
+                href={`/products/${c.slug}`}
+                data-astro-prefetch
+              >
+                <Image
+                  src={c.imageUrl ?? "/placeholder.svg"}
+                  alt={`A small picture of ${c.name}`}
+                  class="mb-2 h-14 w-14 border hover:bg-yellow-200"
+                  width={48}
+                  height={48}
+                  quality={65}
+                />
+                <span class="text-xs">{c.name}</span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+    )
+  }
+</CollectionLayout>

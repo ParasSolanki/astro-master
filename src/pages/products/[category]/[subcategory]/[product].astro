@@ -1,0 +1,98 @@
+---
+import CollectionLayout from "../../../../layouts/collections.astro";
+import { db, schema } from "../../../../server/db";
+import { eq, not, and } from "drizzle-orm";
+import { Image } from "astro:assets";
+
+const {
+  category: categorySlug,
+  subcategory: subcategorySlug,
+  product: productSlug,
+} = Astro.params;
+
+if (!categorySlug || !subcategorySlug || !productSlug) {
+  return Astro.redirect("/404");
+}
+
+const [product, similarProducts] = await Promise.all([
+  db.query.productsTable.findFirst({
+    where: eq(schema.productsTable.slug, productSlug),
+  }),
+  db
+    .select({
+      name: schema.productsTable.name,
+      slug: schema.productsTable.slug,
+      imageUrl: schema.productsTable.imageUrl,
+      description: schema.productsTable.description,
+    })
+    .from(schema.productsTable)
+    .leftJoin(
+      schema.subcategoriesTable,
+      eq(schema.subcategoriesTable.slug, schema.productsTable.subcategorySlug),
+    )
+    .where(
+      and(
+        not(eq(schema.productsTable.slug, productSlug)),
+        eq(schema.subcategoriesTable.slug, subcategorySlug),
+      ),
+    ),
+]);
+
+const title = product?.name ? `${product.name} | AstroMaster` : "AstroMaster";
+const description = product?.name
+  ? `Details of ${product.name}`
+  : "AstroMaster";
+---
+
+<CollectionLayout
+  title={title}
+  description={description}
+  imageUrl={product?.imageUrl}
+>
+  {!product && <div>Product not found</div>}
+  {
+    product && (
+      <div class="container p-4">
+        <h1 class="text-accent1 border-t-2 pt-1 text-xl font-bold">
+          {product.name}
+        </h1>
+        <div class="flex flex-col gap-2">
+          <div class="flex flex-row gap-2">
+            <Image
+              src={product.imageUrl ?? "/placeholder.svg?height=64&width=64"}
+              alt={`A small picture of ${product.name}`}
+              height={256}
+              quality={80}
+              width={256}
+              class="h-56 w-56 flex-shrink-0 border-2 md:h-64 md:w-64"
+            />
+            <p class="flex-grow text-base">{product.description}</p>
+          </div>
+          <p class="text-xl font-bold">
+            ${parseFloat(product.price).toFixed(2)}
+          </p>
+          {/* <AddToCartForm productSlug={product.slug} /> */}
+        </div>
+        <div class="pt-8">
+          {similarProducts.length > 0 && (
+            <h2 class="text-accent1 text-lg font-bold">
+              Explore more products
+            </h2>
+          )}
+          <div class="flex flex-row flex-wrap gap-2">
+            {/* {similarProducts?.map((product) => (
+            // <ProductLink
+            //   key={product.name}
+            //   loading="lazy"
+            //   category_slug={category}
+            //   subcategory_slug={subcategory}
+            //   product={product}
+            //   imageUrl={product.image_url}
+            // />
+          ))} */}
+          </div>
+        </div>
+      </div>
+    )
+  }
+</CollectionLayout>
