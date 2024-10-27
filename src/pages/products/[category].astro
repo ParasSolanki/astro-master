@@ -4,20 +4,24 @@ import { db, schema } from "../../server/db";
 import { eq, count } from "drizzle-orm";
 import { Image } from "astro:assets";
 
-export const prerender = true;
+// export const prerender = true;
 
-export async function getStaticPaths() {
-  const categories = await db
-    .select({ slug: schema.categoriesTable.slug })
-    .from(schema.categoriesTable);
-  return categories.map((c) => ({
-    params: {
-      category: c.slug,
-    },
-  }));
-}
+// export async function getStaticPaths() {
+//   const categories = await db
+//     .select({ slug: schema.categoriesTable.slug })
+//     .from(schema.categoriesTable);
+//   return categories.map((c) => ({
+//     params: {
+//       category: c.slug,
+//     },
+//   }));
+// }
 
 const { category: categorySlug } = Astro.params;
+
+if (!categorySlug) {
+  return Astro.redirect("/404");
+}
 
 const [category, products] = await Promise.all([
   db.query.categoriesTable.findFirst({

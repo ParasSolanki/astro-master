@@ -4,15 +4,15 @@ import CollectionLayout from "../layouts/collections.astro";
 import { db, schema } from "../server/db";
 import { Image } from "astro:assets";
 
-export const prerender = true;
+// export const prerender = true;
 
-export async function getStaticPaths() {
-  const collections = await db
-    .select({ slug: schema.collectionsTable.slug })
-    .from(schema.collectionsTable);
+// export async function getStaticPaths() {
+//   const collections = await db
+//     .select({ slug: schema.collectionsTable.slug })
+//     .from(schema.collectionsTable);
 
-  return collections.map((c) => ({ params: { collection: c.slug } }));
-}
+//   return collections.map((c) => ({ params: { collection: c.slug } }));
+// }
 
 const { collection: collectionSlug } = Astro.params;
 
