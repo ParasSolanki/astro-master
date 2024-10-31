@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/default.astro";
 import { db, schema } from "../server/db";
-import { asc, count, eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 import { Image } from "astro:assets";
 
 const [collections, products] = await Promise.all([
