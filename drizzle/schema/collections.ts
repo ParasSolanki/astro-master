@@ -16,6 +16,8 @@ export const collectionsTable = sqliteTable(
     name: text("name").notNull(),
     slug: text("slug").notNull(),
 
+    productsCount: integer("products_count").notNull().default(0),
+
     ...lifecycleDates,
   },
   (t) => ({

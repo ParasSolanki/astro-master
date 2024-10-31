@@ -22,6 +22,71 @@ async function seed() {
 
   const db = drizzle(client, { logger: true, schema });
 
+  console.log("Seeding product row counts in collections");
+
+  const collections = await db
+    .select({
+      id: schema.collectionsTable.id,
+      productsCount: count(schema.productsTable.slug),
+    })
+    .from(schema.collectionsTable)
+    .leftJoin(
+      schema.categoriesTable,
+      eq(schema.categoriesTable.collectionId, schema.collectionsTable.id),
+    )
+    .leftJoin(
+      schema.subcollectionsTable,
+      eq(schema.subcollectionsTable.categorySlug, schema.categoriesTable.slug),
+    )
+    .leftJoin(
+      schema.subcategoriesTable,
+      eq(
+        schema.subcategoriesTable.subcollectionId,
+        schema.subcollectionsTable.id,
+      ),
+    )
+    .leftJoin(
+      schema.productsTable,
+      eq(schema.productsTable.subcategorySlug, schema.subcategoriesTable.slug),
+    )
+    .groupBy(schema.collectionsTable.id);
+
+  const groupCollections = collections.reduce<
+    Array<Array<{ id: string; productsCount: number }>>
+  >((acc, curr, i) => {
+    if (i % 10 === 0) acc.push([curr]);
+    else acc[acc.length - 1].push(curr);
+
+    return acc;
+  }, []);
+
+  let collectionIndex = 0;
+
+  await pMap(
+    groupCollections,
+    async (categories) => {
+      collectionIndex++;
+      const queries = categories.map((c) =>
+        db
+          .update(schema.collectionsTable)
+          .set({ productsCount: c.productsCount })
+          .where(eq(schema.collectionsTable.id, c.id)),
+      );
+
+      // @ts-expect-error
+      await db.batch(queries);
+
+      console.log(
+        `Seeded ${collectionIndex * 10} collections with product counts`,
+      );
+    },
+    {
+      concurrency: 10,
+    },
+  );
+
+  console.log("Seeded product row counts in collections");
+
   console.log("Seeding product row counts in categories");
 
   const categories = await db

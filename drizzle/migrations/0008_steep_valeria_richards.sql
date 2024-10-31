@@ -1,0 +1,1 @@
+ALTER TABLE `collections` ADD `products_count` integer DEFAULT 0 NOT NULL;
