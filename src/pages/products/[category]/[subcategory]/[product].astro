@@ -73,25 +73,41 @@ const description = product?.name
           </p>
           {/* <AddToCartForm productSlug={product.slug} /> */}
         </div>
-        <div class="pt-8">
-          {similarProducts.length > 0 && (
+        {similarProducts.length > 0 && (
+          <div class="pt-8">
             <h2 class="text-accent1 text-lg font-bold">
               Explore more products
             </h2>
-          )}
-          <div class="flex flex-row flex-wrap gap-2">
-            {/* {similarProducts?.map((product) => (
-            // <ProductLink
-            //   key={product.name}
-            //   loading="lazy"
-            //   category_slug={category}
-            //   subcategory_slug={subcategory}
-            //   product={product}
-            //   imageUrl={product.image_url}
-            // />
-          ))} */}
+            <div class="flex flex-row flex-wrap gap-2">
+              {similarProducts.map((p) => (
+                <a
+                  data-astro-prefetch
+                  class="group flex h-[130px] w-full flex-row border px-4 py-2 hover:bg-gray-100 sm:w-[250px]"
+                  href={`/products/${categorySlug}/${subcategorySlug}/${product.slug}`}
+                >
+                  <div class="py-2">
+                    <Image
+                      decoding="async"
+                      src={p.imageUrl ?? "/placeholder.svg?height=48&width=48"}
+                      alt={`A small picture of ${p.name}`}
+                      width={48}
+                      height={48}
+                      quality={65}
+                      class="h-auto w-12 flex-shrink-0 object-cover"
+                    />
+                  </div>
+                  <div class="px-2" />
+                  <div class="h-26 flex flex-grow flex-col items-start py-2">
+                    <div class="text-sm font-medium text-gray-700 group-hover:underline">
+                      {p.name}
+                    </div>
+                    <p class="overflow-hidden text-xs">{p.description}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     )
   }
