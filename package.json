@@ -26,7 +26,8 @@
     "db:seed:categories": "dotenvx run -- tsx ./drizzle/seeders/categories.ts",
     "db:seed:subcollections": "dotenvx run -- tsx ./drizzle/seeders/subcollections.ts",
     "db:seed:subcategories": "dotenvx run -- tsx ./drizzle/seeders/subcategories.ts",
-    "db:seed:products": "dotenvx run -- tsx ./drizzle/seeders/products.ts"
+    "db:seed:products": "dotenvx run -- tsx ./drizzle/seeders/products.ts",
+    "db:seed:rowcounts": "dotenvx run -- tsx ./drizzle/seeders/row-counts.ts"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
