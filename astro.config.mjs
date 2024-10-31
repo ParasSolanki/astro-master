@@ -22,6 +22,9 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
   ],
+  image: {
+    domains: ["bevgyjm5apuichhj.public.blob.vercel-storage.com"],
+  },
   vite: {
     plugins: [FontaineTransform.vite(options)],
   },
