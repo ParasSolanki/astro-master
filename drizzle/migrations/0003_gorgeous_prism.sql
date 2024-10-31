@@ -1,0 +1,1 @@
+CREATE INDEX `products_slug_idx` ON `products` (`slug`);

@@ -11,6 +11,7 @@ export const usersTable = sqliteTable(
     ...lifecycleDates,
   },
   (t) => ({
+    idIdx: uniqueIndex("users_unique_id_idx").on(t.id),
     usernameIdx: uniqueIndex("users_unique_username_idx").on(t.username),
   }),
 );

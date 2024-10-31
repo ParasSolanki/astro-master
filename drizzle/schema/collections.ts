@@ -1,14 +1,27 @@
-import { index, numeric, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import {
+  index,
+  numeric,
+  sqliteTable,
+  text,
+  uniqueIndex,
+} from "drizzle-orm/sqlite-core";
 import { lifecycleDates, primaryId } from "./utils";
 import { relations } from "drizzle-orm";
 
-export const collectionsTable = sqliteTable("collections", {
-  id: primaryId(),
-  name: text("name").notNull(),
-  slug: text("slug").notNull(),
+export const collectionsTable = sqliteTable(
+  "collections",
+  {
+    id: primaryId(),
+    name: text("name").notNull(),
+    slug: text("slug").notNull(),
 
-  ...lifecycleDates,
-});
+    ...lifecycleDates,
+  },
+  (t) => ({
+    idIdx: uniqueIndex("collections_id_idx").on(t.id),
+    slugIdx: index("collections_slug_idx").on(t.slug),
+  }),
+);
 
 export const categoriesTable = sqliteTable(
   "categories",
@@ -24,6 +37,7 @@ export const categoriesTable = sqliteTable(
     ...lifecycleDates,
   },
   (t) => ({
+    slugIdx: index("categories_slug_idx").on(t.slug),
     collectionIdx: index("categories_collection_id_idx").on(t.collectionId),
   }),
 );
@@ -59,6 +73,7 @@ export const subcategoriesTable = sqliteTable(
     ...lifecycleDates,
   },
   (t) => ({
+    slugIdx: index("subcategories_slug_idx").on(t.slug),
     subcollectionIdIdx: index("subcategories_subcollection_id_idx").on(
       t.subcollectionId,
     ),
@@ -82,6 +97,7 @@ export const productsTable = sqliteTable(
     ...lifecycleDates,
   },
   (t) => ({
+    slugIdx: index("products_slug_idx").on(t.slug),
     nameIdx: index("products_name_idx").on(t.name),
     subcategorySlugIdx: index("products_subcategory_slug_idx").on(
       t.subcategorySlug,
