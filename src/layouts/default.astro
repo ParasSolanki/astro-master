@@ -16,6 +16,10 @@ const { title, description, imageUrl } = Astro.props;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="preconnect"
+      href="https://bevgyjm5apuichhj.public.blob.vercel-storage.com"
+    />
     <title>{title}</title>
     <meta name="description" content={description} />
     <meta name="og:type" content="website" />
@@ -38,10 +42,6 @@ const { title, description, imageUrl } = Astro.props;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:description" content={description} />
 
-    <link
-      rel="dns-prefetch"
-      href="https://bevgyjm5apuichhj.public.blob.vercel-storage.com"
-    />
     <ViewTransitions />
   </head>
   <body class="bg-background font-sans text-foreground antialiased">

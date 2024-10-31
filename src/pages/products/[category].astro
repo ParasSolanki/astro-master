@@ -23,58 +23,36 @@ if (!categorySlug) {
   return Astro.redirect("/404");
 }
 
-const [category, products] = await Promise.all([
-  db.query.categoriesTable.findFirst({
-    where: eq(schema.categoriesTable.slug, categorySlug),
-    columns: {
-      name: true,
-      slug: true,
-      imageUrl: true,
-    },
-    with: {
-      subcollections: {
-        columns: {
-          name: true,
-        },
-        with: {
-          subcategories: {
-            columns: {
-              name: true,
-              imageUrl: true,
-              slug: true,
-            },
+const category = await db.query.categoriesTable.findFirst({
+  where: eq(schema.categoriesTable.slug, categorySlug),
+  columns: {
+    name: true,
+    slug: true,
+    imageUrl: true,
+    productsCount: true,
+  },
+  with: {
+    subcollections: {
+      columns: {
+        name: true,
+      },
+      with: {
+        subcategories: {
+          columns: {
+            name: true,
+            imageUrl: true,
+            slug: true,
           },
         },
       },
     },
-  }),
-  db
-    .select({ count: count() })
-    .from(schema.productsTable)
-    .leftJoin(
-      schema.subcategoriesTable,
-      eq(schema.productsTable.subcategorySlug, schema.subcategoriesTable.slug),
-    )
-    .leftJoin(
-      schema.subcollectionsTable,
-      eq(
-        schema.subcollectionsTable.id,
-        schema.subcategoriesTable.subcollectionId,
-      ),
-    )
-    .leftJoin(
-      schema.categoriesTable,
-      eq(schema.categoriesTable.slug, schema.subcollectionsTable.categorySlug),
-    )
-    .where(eq(schema.categoriesTable.slug, categorySlug)),
-]);
+  },
+});
 
 const title = category?.name ? `${category.name} | AstroMaster` : "AstroMaster";
 const description = category?.name
   ? `Subcategories of ${category.name} category`
   : "AstroMaster";
-
-const productsCount = products.at(0)?.count ?? 0;
 ---
 
 <CollectionLayout
@@ -87,9 +65,10 @@ const productsCount = products.at(0)?.count ?? 0;
     category && (
       <div class="w-full p-4">
         <div class="container p-4">
-          {productsCount && (
+          {category.productsCount && (
             <h1 class="mb-2 border-b-2 text-sm font-bold">
-              {productsCount} {productsCount === 1 ? "Product" : "Products"}
+              {category.productsCount}{" "}
+              {category.productsCount === 1 ? "Product" : "Products"}
             </h1>
           )}
           <div class="space-y-4">

@@ -20,48 +20,24 @@ if (!collectionSlug) {
   return Astro.redirect("/404");
 }
 
-const [collection, products] = await Promise.all([
-  db.query.collectionsTable.findFirst({
-    where: eq(schema.collectionsTable.slug, collectionSlug),
-    columns: {
-      name: true,
-      slug: true,
-    },
-    with: {
-      categories: {
-        columns: {
-          name: true,
-          slug: true,
-          imageUrl: true,
-        },
+const collection = await db.query.collectionsTable.findFirst({
+  where: eq(schema.collectionsTable.slug, collectionSlug),
+  columns: {
+    name: true,
+    slug: true,
+    productsCount: true,
+  },
+  with: {
+    categories: {
+      columns: {
+        name: true,
+        slug: true,
+        imageUrl: true,
       },
     },
-    orderBy: asc(schema.collectionsTable.name),
-  }),
-  db
-    .select({ count: count() })
-    .from(schema.productsTable)
-    .leftJoin(
-      schema.subcategoriesTable,
-      eq(schema.productsTable.subcategorySlug, schema.subcategoriesTable.slug),
-    )
-    .leftJoin(
-      schema.subcollectionsTable,
-      eq(
-        schema.subcollectionsTable.id,
-        schema.subcategoriesTable.subcollectionId,
-      ),
-    )
-    .leftJoin(
-      schema.categoriesTable,
-      eq(schema.categoriesTable.slug, schema.subcollectionsTable.categorySlug),
-    )
-    .leftJoin(
-      schema.collectionsTable,
-      eq(schema.collectionsTable.id, schema.categoriesTable.collectionId),
-    )
-    .where(eq(schema.collectionsTable.slug, collectionSlug)),
-]);
+  },
+  orderBy: asc(schema.collectionsTable.name),
+});
 
 const title = collection?.name
   ? `${collection.name} | AstroMaster`
@@ -69,8 +45,6 @@ const title = collection?.name
 const description = collection?.name
   ? `Categories list of ${collection.name} collection`
   : "AstroMaster";
-
-const productsCount = products.at(0)?.count ?? 0;
 ---
 
 <CollectionLayout title={title} description={description}>
@@ -79,7 +53,7 @@ const productsCount = products.at(0)?.count ?? 0;
     collection && (
       <div class="w-full p-4">
         <div class="mb-2 w-full flex-grow border-b-[1px] border-green-800 text-sm font-semibold text-black">
-          Explore {productsCount.toLocaleString()} products
+          Explore {collection.productsCount.toLocaleString()} products
         </div>
 
         <div>

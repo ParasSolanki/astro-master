@@ -1,7 +1,7 @@
 ---
 import Layout from "../layouts/default.astro";
 import { db, schema } from "../server/db";
-import { asc, count } from "drizzle-orm";
+import { asc, count, eq } from "drizzle-orm";
 import { Image } from "astro:assets";
 
 const [collections, products] = await Promise.all([
@@ -21,7 +21,12 @@ const [collections, products] = await Promise.all([
     },
     orderBy: asc(schema.collectionsTable.name),
   }),
-  db.select({ count: count() }).from(schema.productsTable),
+  db.query.tableRowCountsTable.findFirst({
+    where: eq(schema.tableRowCountsTable.tableName, "products"),
+    columns: {
+      rowCount: true,
+    },
+  }),
 ]);
 ---
 
@@ -56,7 +61,7 @@ const [collections, products] = await Promise.all([
         <div
           class="mb-2 w-full flex-grow border-b-[1px] border-green-800 text-sm font-semibold text-black"
         >
-          Explore {products.at(0)?.count.toLocaleString()} products
+          Explore {products?.rowCount.toLocaleString()} products
         </div>
         {
           collections.map((collection) => (
