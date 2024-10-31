@@ -1,5 +1,6 @@
 import {
   index,
+  integer,
   numeric,
   sqliteTable,
   text,
@@ -33,6 +34,8 @@ export const categoriesTable = sqliteTable(
     collectionId: text("collection_id")
       .notNull()
       .references(() => collectionsTable.id, { onDelete: "cascade" }),
+
+    productsCount: integer("products_count").notNull().default(0),
 
     ...lifecycleDates,
   },
@@ -69,6 +72,8 @@ export const subcategoriesTable = sqliteTable(
     subcollectionId: text("subcollection_id")
       .notNull()
       .references(() => subcollectionsTable.id, { onDelete: "cascade" }),
+
+    productsCount: integer("products_count").notNull().default(0),
 
     ...lifecycleDates,
   },

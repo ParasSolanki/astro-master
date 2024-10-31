@@ -43,6 +43,20 @@
       "when": 1730296404218,
       "tag": "0005_wandering_korath",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1730364435739,
+      "tag": "0006_mature_old_lace",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1730364469389,
+      "tag": "0007_fine_sersi",
+      "breakpoints": true
     }
   ]
 }
