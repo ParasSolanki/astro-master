@@ -64,6 +64,13 @@
       "when": 1730367605919,
       "tag": "0008_steep_valeria_richards",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1730899721385,
+      "tag": "0009_noisy_swordsman",
+      "breakpoints": true
     }
   ]
 }
