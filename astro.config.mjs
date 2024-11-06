@@ -4,6 +4,7 @@ import { FontaineTransform } from "fontaine";
 import tailwind from "@astrojs/tailwind";
 import vercel from "@astrojs/vercel/serverless";
 import sitemap from "@astrojs/sitemap";
+import solidJs from "@astrojs/solid-js";
 
 const options = {
   fallbacks: ["ui-sans-serif", "Segoe UI", "Arial"],
@@ -24,6 +25,7 @@ export default defineConfig({
       applyBaseStyles: false,
     }),
     sitemap(),
+    solidJs(),
   ],
   image: {
     domains: ["bevgyjm5apuichhj.public.blob.vercel-storage.com"],

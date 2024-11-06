@@ -1,6 +1,8 @@
 ---
-import "../styles/global.css";
 import { ViewTransitions } from "astro:transitions";
+import { UserMenu } from "../components/user-menu.tsx";
+
+import "../styles/global.css";
 
 interface Props {
   title: string;
@@ -9,6 +11,8 @@ interface Props {
 }
 
 const { title, description, imageUrl } = Astro.props;
+
+const user = Astro.locals.user;
 ---
 
 <!doctype html>
@@ -61,6 +65,9 @@ const { title, description, imageUrl } = Astro.props;
       class="sticky top-0 z-10 flex flex-grow items-center justify-between gap-4 border-b-2 border-yellow-300 bg-background p-2 pb-[4px] pt-2 sm:flex-row sm:p-4 sm:pb-[4px] sm:pt-0"
     >
       <div class="flex flex-grow flex-col">
+        <div class="flex justify-end py-1">
+          <UserMenu client:load user={user} />
+        </div>
         <div
           class="flex w-full flex-col items-start justify-center gap-2 sm:w-auto sm:flex-row sm:items-center"
         >

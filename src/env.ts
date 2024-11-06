@@ -9,6 +9,9 @@ export const env = createEnv({
     TURSO_DATABASE_URL: z
       .string({ required_error: "TURSO_DATABASE_URL is required" })
       .min(1, "TURSO_DATABASE_URL is required"),
+    CSRF_SECRET: z
+      .string({ required_error: "CSRF_SECRET is required" })
+      .min(1, "CSRF_SECRET is required"),
   },
   shared: {
     PROD: z.boolean(),
