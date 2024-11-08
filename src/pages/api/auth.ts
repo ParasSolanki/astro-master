@@ -4,10 +4,27 @@ import { db, schema } from "../../server/db";
 import { eq } from "drizzle-orm";
 import { Argon2id } from "oslo/password";
 import { auth } from "../../server/auth";
+import { Throttler } from "../../utils/throttler";
+
+const throttler = new Throttler<string>([1, 2, 4, 8, 16, 30, 60, 180, 300]);
 
 export const POST: APIRoute = async ({ request }) => {
+  const ip = request.headers.get("x-real-ip")!;
+
+  if (!throttler.consume(ip)) {
+    return Response.json(
+      {
+        ok: false,
+        code: "TOO_MANY_REQUESTS",
+        message: "Too many requests try again after some time",
+      },
+      { status: 429 },
+    );
+  }
+
   const contentType = request.headers.get("content-type");
   if (!contentType || contentType !== "application/json") {
+    throttler.consume(ip);
     return Response.json(
       { ok: false, code: "FORBIDDEN", message: "Forbidden" },
       { status: 403 },
@@ -19,6 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
   const result = authSchema.safeParse(json);
 
   if (!result.success) {
+    throttler.consume(ip);
     return Response.json(
       {
         ok: false,
@@ -40,6 +58,7 @@ export const POST: APIRoute = async ({ request }) => {
       .where(eq(schema.usersTable.username, usernameInLowercase));
 
     if (user) {
+      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
@@ -72,6 +91,7 @@ export const POST: APIRoute = async ({ request }) => {
       const session = await auth.createSession(user.id);
       const sessionCookie = auth.createSessionCookie(session.id);
 
+      throttler.reset(ip);
       return Response.json(
         {
           ok: true,
@@ -86,6 +106,7 @@ export const POST: APIRoute = async ({ request }) => {
         },
       );
     } catch (error) {
+      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
@@ -112,6 +133,7 @@ export const POST: APIRoute = async ({ request }) => {
       .where(eq(schema.usersTable.username, usernameInLowercase));
 
     if (!user) {
+      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
@@ -123,6 +145,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     if (!user.hashedPassword) {
+      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
@@ -139,6 +162,7 @@ export const POST: APIRoute = async ({ request }) => {
     );
 
     if (!isPasswordValid) {
+      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
@@ -151,7 +175,7 @@ export const POST: APIRoute = async ({ request }) => {
 
     const session = await auth.createSession(user.id);
     const sessionCookie = auth.createSessionCookie(session.id);
-
+    throttler.reset(ip);
     return Response.json(
       {
         ok: true,
@@ -166,6 +190,7 @@ export const POST: APIRoute = async ({ request }) => {
       },
     );
   } catch (error) {
+    throttler.consume(ip);
     return Response.json(
       {
         ok: false,

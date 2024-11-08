@@ -18,16 +18,20 @@ export function UserMenu(props: UserMenuProps) {
   });
 
   createEffect(() => {
-    const handleClose = (e: KeyboardEvent) => {
-      if (e.key === "Escape" && open()) {
-        setOpen(false);
-      }
-    };
+    const controller = new AbortController();
 
-    document.addEventListener("keydown", handleClose);
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        if (event.key === "Escape" && open()) {
+          setOpen(false);
+        }
+      },
+      { signal: controller.signal },
+    );
 
     onCleanup(() => {
-      document.removeEventListener("keydown", handleClose);
+      controller.abort();
     });
   });
 
