@@ -130,7 +130,7 @@ function AuthForm() {
     if (!response.ok) {
       const json = await response.json();
       setErrors({
-        root: json && json.message ? json.mesage : "Something went wrong",
+        root: json && json.message ? json.message : "Something went wrong",
       });
       return;
     }
