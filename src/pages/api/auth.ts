@@ -9,7 +9,7 @@ export const POST: APIRoute = async ({ request }) => {
   const contentType = request.headers.get("content-type");
   if (!contentType || contentType !== "application/json") {
     return Response.json(
-      JSON.stringify({ ok: false, code: "FORBIDDEN", message: "Forbidden" }),
+      { ok: false, code: "FORBIDDEN", message: "Forbidden" },
       { status: 403 },
     );
   }
@@ -20,12 +20,12 @@ export const POST: APIRoute = async ({ request }) => {
 
   if (!result.success) {
     return Response.json(
-      JSON.stringify({
+      {
         ok: false,
         code: "BAD_REQUEST",
         message: "Missing required fields",
         errors: result.error.flatten().fieldErrors,
-      }),
+      },
       { status: 400 },
     );
   }
@@ -41,11 +41,11 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (user) {
       return Response.json(
-        JSON.stringify({
+        {
           ok: false,
           code: "CONFLICT",
           message: "Username already taken",
-        }),
+        },
         { status: 409 },
       );
     }
@@ -73,11 +73,11 @@ export const POST: APIRoute = async ({ request }) => {
       const sessionCookie = auth.createSessionCookie(session.id);
 
       return Response.json(
-        JSON.stringify({
+        {
           ok: true,
           code: "OK",
           user: { id: user.id, username: user.username },
-        }),
+        },
         {
           status: 201,
           headers: {
@@ -87,11 +87,11 @@ export const POST: APIRoute = async ({ request }) => {
       );
     } catch (error) {
       return Response.json(
-        JSON.stringify({
+        {
           ok: false,
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
-        }),
+        },
         { status: 500 },
       );
     }
@@ -113,22 +113,22 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!user) {
       return Response.json(
-        JSON.stringify({
+        {
           ok: false,
           code: "BAD_REQUEST",
           message: "Username or password invalid",
-        }),
+        },
         { status: 400 },
       );
     }
 
     if (!user.hashedPassword) {
       return Response.json(
-        JSON.stringify({
+        {
           ok: false,
           code: "BAD_REQUEST",
           message: "Username or password invalid",
-        }),
+        },
         { status: 400 },
       );
     }
@@ -140,11 +140,11 @@ export const POST: APIRoute = async ({ request }) => {
 
     if (!isPasswordValid) {
       return Response.json(
-        JSON.stringify({
+        {
           ok: false,
           code: "BAD_REQUEST",
           message: "Username or password invalid",
-        }),
+        },
         { status: 400 },
       );
     }
@@ -153,11 +153,11 @@ export const POST: APIRoute = async ({ request }) => {
     const sessionCookie = auth.createSessionCookie(session.id);
 
     return Response.json(
-      JSON.stringify({
+      {
         ok: true,
         code: "OK",
         user: { id: user.id, username: user.username },
-      }),
+      },
       {
         status: 200,
         headers: {
@@ -167,11 +167,11 @@ export const POST: APIRoute = async ({ request }) => {
     );
   } catch (error) {
     return Response.json(
-      JSON.stringify({
+      {
         ok: false,
         code: "INTERNAL_SERVER_ERROR",
         message: "Something went wrong",
-      }),
+      },
       { status: 500 },
     );
   }
