@@ -9,7 +9,7 @@ type UserMenuProps = {
 };
 
 export function UserMenu(props: UserMenuProps) {
-  const [user, setUser] = createSignal(props.user);
+  const [user] = createSignal(props.user);
   const [open, setOpen] = createSignal(false);
   let modalRef = undefined as HTMLDivElement | undefined;
 

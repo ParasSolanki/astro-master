@@ -1,6 +1,5 @@
 import type { APIRoute } from "astro";
 import { authSchema } from "../../actions/schema";
-import { error } from "console";
 import { db, schema } from "../../server/db";
 import { eq } from "drizzle-orm";
 import { Argon2id } from "oslo/password";
@@ -17,7 +16,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const json = await request.json();
 
-  const result = await authSchema.safeParse(json);
+  const result = authSchema.safeParse(json);
 
   if (!result.success) {
     return Response.json(
@@ -71,7 +70,7 @@ export const POST: APIRoute = async ({ request }) => {
       });
 
       const session = await auth.createSession(user.id);
-      const sessionCookie = await auth.createSessionCookie(session.id);
+      const sessionCookie = auth.createSessionCookie(session.id);
 
       return Response.json(
         JSON.stringify({
@@ -151,7 +150,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     const session = await auth.createSession(user.id);
-    const sessionCookie = await auth.createSessionCookie(session.id);
+    const sessionCookie = auth.createSessionCookie(session.id);
 
     return Response.json(
       JSON.stringify({

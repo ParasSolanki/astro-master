@@ -3,7 +3,6 @@ import { ViewTransitions } from "astro:transitions";
 import { UserMenu } from "../components/user-menu.tsx";
 
 import "../styles/global.css";
-
 interface Props {
   title: string;
   description: string;
@@ -12,6 +11,7 @@ interface Props {
 
 const { title, description, imageUrl } = Astro.props;
 
+// @ts-expect-error - Astro.user is not defined but it is defined just typing not working
 const user = Astro.locals.user;
 ---
 
@@ -43,7 +43,7 @@ const user = Astro.locals.user;
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:description" content={description} />
 
-    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="AstroMaster" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 

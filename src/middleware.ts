@@ -1,6 +1,6 @@
 import { auth } from "./server/auth";
 import { verifyRequestOrigin } from "oslo/request";
-import { defineMiddleware } from "astro:middleware";
+import { defineMiddleware } from "astro/middleware";
 
 export const onRequest = defineMiddleware(async (context, next) => {
   if (context.request.method !== "GET") {
@@ -20,7 +20,9 @@ export const onRequest = defineMiddleware(async (context, next) => {
 
   const sessionId = context.cookies.get(auth.sessionCookieName)?.value ?? null;
   if (!sessionId) {
+    // @ts-ignore
     context.locals.user = null;
+    // @ts-ignore
     context.locals.session = null;
     return next();
   }
@@ -42,7 +44,10 @@ export const onRequest = defineMiddleware(async (context, next) => {
       sessionCookie.attributes,
     );
   }
+
+  // @ts-ignore
   context.locals.session = session;
+  // @ts-ignore
   context.locals.user = user;
   return next();
 });

@@ -3,6 +3,7 @@ import { parseCookies } from "oslo/cookie";
 import { auth } from "../../../server/auth";
 
 export const POST: APIRoute = async (context: APIContext) => {
+  // @ts-ignore
   if (!context.locals.session) {
     return new Response(null, { status: 401 });
   }
@@ -19,6 +20,7 @@ export const POST: APIRoute = async (context: APIContext) => {
     return new Response(null, { status: 401 });
   }
 
+  // @ts-ignore
   await auth.invalidateSession(context.locals.session.id);
 
   const sessionCookie = auth.createBlankSessionCookie();

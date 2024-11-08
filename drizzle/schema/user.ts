@@ -1,5 +1,4 @@
 import {
-  index,
   integer,
   sqliteTable,
   text,

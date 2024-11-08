@@ -26,7 +26,7 @@ export type User = {
 };
 
 type SessionValidationResult =
-  | { session: Session & { fresh?: boolean }; user: user }
+  | { session: Session & { fresh?: boolean }; user: User }
   | { session: null; user: null };
 
 /**
