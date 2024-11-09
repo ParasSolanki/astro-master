@@ -34,6 +34,6 @@ export default defineConfig({
     plugins: [FontaineTransform.vite(options)],
   },
   build: {
-    concurrency: 3,
+    concurrency: 5,
   },
 });

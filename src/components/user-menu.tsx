@@ -45,6 +45,7 @@ export function UserMenu(props: UserMenuProps) {
         aria-expanded={open() ? "true" : "false"}
         onClick={() => setOpen(!open())}
         class="inline-flex items-center"
+        aria-label={user() ? "User menu" : "Login Menu"}
       >
         {user() ? user()?.username : "Login"}
 
