@@ -9,6 +9,12 @@ export const env = createEnv({
     TURSO_DATABASE_URL: z
       .string({ required_error: "TURSO_DATABASE_URL is required" })
       .min(1, "TURSO_DATABASE_URL is required"),
+    UPSTASH_REDIS_REST_URL: z
+      .string({ required_error: "UPSTASH_REDIS_REST_URL is required" })
+      .min(10, "UPSTASH_REDIS_REST_URL must contain at most 10 character(s)"),
+    UPSTASH_REDIS_REST_TOKEN: z
+      .string({ required_error: "UPSTASH_REDIS_REST_TOKEN is required" })
+      .min(1, "UPSTASH_REDIS_REST_TOKEN is required"),
     CSRF_SECRET: z
       .string({ required_error: "CSRF_SECRET is required" })
       .min(1, "CSRF_SECRET is required"),

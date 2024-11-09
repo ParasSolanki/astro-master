@@ -39,6 +39,8 @@
     "@oslojs/crypto": "^1.0.1",
     "@oslojs/encoding": "^1.1.0",
     "@t3-oss/env-core": "^0.11.1",
+    "@upstash/ratelimit": "^2.0.4",
+    "@upstash/redis": "^1.34.3",
     "astro": "^4.16.10",
     "drizzle-orm": "^0.35.3",
     "oslo": "^1.2.1",

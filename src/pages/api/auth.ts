@@ -4,30 +4,42 @@ import { db, schema } from "../../server/db";
 import { eq } from "drizzle-orm";
 import { Argon2id } from "oslo/password";
 import { auth } from "../../server/auth";
-import { Throttler } from "../../utils/throttler";
-
-const throttler = new Throttler<string>([1, 2, 4, 8, 16, 30, 60, 180, 300]);
+import { AUTH_RATELIMIT_WINDOW, authRateLimit } from "../../lib/upstash";
 
 export const POST: APIRoute = async ({ request }) => {
-  const ip = request.headers.get("x-real-ip")!;
+  const headers = new Headers();
+  const ip = request.headers.get("x-real-ip") ?? "dev";
+  const { success, limit, remaining, reset } = await authRateLimit.limit(ip);
 
-  if (!throttler.consume(ip)) {
+  const resetInSeconds = Math.floor(
+    (new Date(reset).getTime() - Date.now()) / 1000,
+  );
+
+  headers.set("Content-Type", "application/json");
+  headers.set("Ratelimit-Limit", limit.toString());
+  headers.set("Ratelimit-Remaining", remaining.toString());
+  headers.set("Ratelimit-Reset", resetInSeconds.toString());
+  headers.set(
+    "Ratelimit-Policy",
+    `${limit.toString()};w=${AUTH_RATELIMIT_WINDOW.toString()}`,
+  );
+
+  if (!success) {
     return Response.json(
       {
         ok: false,
         code: "TOO_MANY_REQUESTS",
         message: "Too many requests try again after some time",
       },
-      { status: 429 },
+      { status: 429, headers },
     );
   }
 
   const contentType = request.headers.get("content-type");
   if (!contentType || contentType !== "application/json") {
-    throttler.consume(ip);
     return Response.json(
       { ok: false, code: "FORBIDDEN", message: "Forbidden" },
-      { status: 403 },
+      { status: 403, headers },
     );
   }
 
@@ -36,7 +48,6 @@ export const POST: APIRoute = async ({ request }) => {
   const result = authSchema.safeParse(json);
 
   if (!result.success) {
-    throttler.consume(ip);
     return Response.json(
       {
         ok: false,
@@ -44,7 +55,7 @@ export const POST: APIRoute = async ({ request }) => {
         message: "Missing required fields",
         errors: result.error.flatten().fieldErrors,
       },
-      { status: 400 },
+      { status: 400, headers },
     );
   }
 
@@ -58,14 +69,13 @@ export const POST: APIRoute = async ({ request }) => {
       .where(eq(schema.usersTable.username, usernameInLowercase));
 
     if (user) {
-      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
           code: "CONFLICT",
           message: "Username already taken",
         },
-        { status: 409 },
+        { status: 409, headers },
       );
     }
 
@@ -90,30 +100,23 @@ export const POST: APIRoute = async ({ request }) => {
 
       const session = await auth.createSession(user.id);
       const sessionCookie = auth.createSessionCookie(session.id);
-
-      throttler.reset(ip);
+      headers.append("Set-Cookie", sessionCookie.serialize());
       return Response.json(
         {
           ok: true,
           code: "OK",
           user: { id: user.id, username: user.username },
         },
-        {
-          status: 201,
-          headers: {
-            "Set-Cookie": sessionCookie.serialize(),
-          },
-        },
+        { status: 201, headers },
       );
     } catch (error) {
-      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
           code: "INTERNAL_SERVER_ERROR",
           message: "Something went wrong",
         },
-        { status: 500 },
+        { status: 500, headers },
       );
     }
   }
@@ -133,26 +136,24 @@ export const POST: APIRoute = async ({ request }) => {
       .where(eq(schema.usersTable.username, usernameInLowercase));
 
     if (!user) {
-      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
           code: "BAD_REQUEST",
           message: "Username or password invalid",
         },
-        { status: 400 },
+        { status: 400, headers },
       );
     }
 
     if (!user.hashedPassword) {
-      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
           code: "BAD_REQUEST",
           message: "Username or password invalid",
         },
-        { status: 400 },
+        { status: 400, headers },
       );
     }
 
@@ -162,42 +163,36 @@ export const POST: APIRoute = async ({ request }) => {
     );
 
     if (!isPasswordValid) {
-      throttler.consume(ip);
       return Response.json(
         {
           ok: false,
           code: "BAD_REQUEST",
           message: "Username or password invalid",
         },
-        { status: 400 },
+        { status: 400, headers },
       );
     }
 
     const session = await auth.createSession(user.id);
     const sessionCookie = auth.createSessionCookie(session.id);
-    throttler.reset(ip);
+    headers.append("Set-Cookie", sessionCookie.serialize());
+
     return Response.json(
       {
         ok: true,
         code: "OK",
         user: { id: user.id, username: user.username },
       },
-      {
-        status: 200,
-        headers: {
-          "Set-Cookie": sessionCookie.serialize(),
-        },
-      },
+      { status: 200, headers },
     );
   } catch (error) {
-    throttler.consume(ip);
     return Response.json(
       {
         ok: false,
         code: "INTERNAL_SERVER_ERROR",
         message: "Something went wrong",
       },
-      { status: 500 },
+      { status: 500, headers },
     );
   }
 };

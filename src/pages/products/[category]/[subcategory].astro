@@ -36,6 +36,15 @@ const title = subcategory?.name
 const description = subcategory?.name
   ? `Products of ${subcategory.name} subcategory`
   : "AstroMaster";
+
+Astro.response.headers.set(
+  "Vercel-CDN-Cache-Control",
+  "s-max-age=3600, stale-while-revalidate=60",
+);
+Astro.response.headers.set(
+  "CDN-Cache-Control",
+  "s-max-age=3600, stale-while-revalidate=60",
+);
 ---
 
 <CollectionLayout

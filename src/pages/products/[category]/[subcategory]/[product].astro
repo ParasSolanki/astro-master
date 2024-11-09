@@ -42,6 +42,15 @@ const title = product?.name ? `${product.name} | AstroMaster` : "AstroMaster";
 const description = product?.name
   ? `Details of ${product.name}`
   : "AstroMaster";
+
+Astro.response.headers.set(
+  "Vercel-CDN-Cache-Control",
+  "s-max-age=3600, stale-while-revalidate=60",
+);
+Astro.response.headers.set(
+  "CDN-Cache-Control",
+  "s-max-age=3600, stale-while-revalidate=60",
+);
 ---
 
 <CollectionLayout
