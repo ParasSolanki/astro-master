@@ -11,10 +11,14 @@ export const POST: APIRoute = async ({ request }) => {
   const ip = request.headers.get("x-real-ip") ?? "dev";
   const { success, limit, remaining, reset } = await authRateLimit.limit(ip);
 
+  const resetInSeconds = Math.floor(
+    (new Date(reset).getTime() - Date.now()) / 1000,
+  );
+
   headers.set("Content-Type", "application/json");
   headers.set("Ratelimit-Limit", limit.toString());
   headers.set("Ratelimit-Remaining", remaining.toString());
-  headers.set("Ratelimit-Reset", reset.toString());
+  headers.set("Ratelimit-Reset", resetInSeconds.toString());
   headers.set(
     "Ratelimit-Policy",
     `${limit.toString()};w=${AUTH_RATELIMIT_WINDOW.toString()}`,

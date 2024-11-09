@@ -48,16 +48,12 @@
       "indexes": {
         "user_passwords_user_id_unique": {
           "name": "user_passwords_user_id_unique",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": true
         },
         "user_passwords_unique_user_id_idx": {
           "name": "user_passwords_unique_user_id_idx",
-          "columns": [
-            "user_id"
-          ],
+          "columns": ["user_id"],
           "isUnique": true
         }
       },
@@ -66,12 +62,8 @@
           "name": "user_passwords_user_id_users_id_fk",
           "tableFrom": "user_passwords",
           "tableTo": "users",
-          "columnsFrom": [
-            "user_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["user_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -117,23 +109,17 @@
       "indexes": {
         "users_username_unique": {
           "name": "users_username_unique",
-          "columns": [
-            "username"
-          ],
+          "columns": ["username"],
           "isUnique": true
         },
         "users_unique_id_idx": {
           "name": "users_unique_id_idx",
-          "columns": [
-            "id"
-          ],
+          "columns": ["id"],
           "isUnique": true
         },
         "users_unique_username_idx": {
           "name": "users_unique_username_idx",
-          "columns": [
-            "username"
-          ],
+          "columns": ["username"],
           "isUnique": true
         }
       },
@@ -201,16 +187,12 @@
       "indexes": {
         "categories_slug_idx": {
           "name": "categories_slug_idx",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": false
         },
         "categories_collection_id_idx": {
           "name": "categories_collection_id_idx",
-          "columns": [
-            "collection_id"
-          ],
+          "columns": ["collection_id"],
           "isUnique": false
         }
       },
@@ -219,12 +201,8 @@
           "name": "categories_collection_id_collections_id_fk",
           "tableFrom": "categories",
           "tableTo": "collections",
-          "columnsFrom": [
-            "collection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["collection_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -277,16 +255,12 @@
       "indexes": {
         "collections_id_idx": {
           "name": "collections_id_idx",
-          "columns": [
-            "id"
-          ],
+          "columns": ["id"],
           "isUnique": true
         },
         "collections_slug_idx": {
           "name": "collections_slug_idx",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": false
         }
       },
@@ -360,23 +334,17 @@
       "indexes": {
         "products_slug_idx": {
           "name": "products_slug_idx",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": false
         },
         "products_name_idx": {
           "name": "products_name_idx",
-          "columns": [
-            "name"
-          ],
+          "columns": ["name"],
           "isUnique": false
         },
         "products_subcategory_slug_idx": {
           "name": "products_subcategory_slug_idx",
-          "columns": [
-            "subcategory_slug"
-          ],
+          "columns": ["subcategory_slug"],
           "isUnique": false
         }
       },
@@ -385,12 +353,8 @@
           "name": "products_subcategory_slug_subcategories_slug_fk",
           "tableFrom": "products",
           "tableTo": "subcategories",
-          "columnsFrom": [
-            "subcategory_slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["subcategory_slug"],
+          "columnsTo": ["slug"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -458,16 +422,12 @@
       "indexes": {
         "subcategories_slug_idx": {
           "name": "subcategories_slug_idx",
-          "columns": [
-            "slug"
-          ],
+          "columns": ["slug"],
           "isUnique": false
         },
         "subcategories_subcollection_id_idx": {
           "name": "subcategories_subcollection_id_idx",
-          "columns": [
-            "subcollection_id"
-          ],
+          "columns": ["subcollection_id"],
           "isUnique": false
         }
       },
@@ -476,12 +436,8 @@
           "name": "subcategories_subcollection_id_subcollections_id_fk",
           "tableFrom": "subcategories",
           "tableTo": "subcollections",
-          "columnsFrom": [
-            "subcollection_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
+          "columnsFrom": ["subcollection_id"],
+          "columnsTo": ["id"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
@@ -534,9 +490,7 @@
       "indexes": {
         "subcollections_category_slug_idx": {
           "name": "subcollections_category_slug_idx",
-          "columns": [
-            "category_slug"
-          ],
+          "columns": ["category_slug"],
           "isUnique": false
         }
       },
@@ -545,12 +499,8 @@
           "name": "subcollections_category_slug_categories_slug_fk",
           "tableFrom": "subcollections",
           "tableTo": "categories",
-          "columnsFrom": [
-            "category_slug"
-          ],
-          "columnsTo": [
-            "slug"
-          ],
+          "columnsFrom": ["category_slug"],
+          "columnsTo": ["slug"],
           "onDelete": "cascade",
           "onUpdate": "no action"
         }
