@@ -4,7 +4,7 @@
   "version": "0.0.1",
   "packageManager": "pnpm@9.12.3",
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=20.10.0"
   },
   "scripts": {
     "dev": "astro dev",
@@ -41,7 +41,7 @@
     "@t3-oss/env-core": "^0.11.1",
     "@upstash/ratelimit": "^2.0.4",
     "@upstash/redis": "^1.34.3",
-    "astro": "^4.16.10",
+    "astro": "^4.16.14",
     "drizzle-orm": "^0.35.3",
     "oslo": "^1.2.1",
     "p-map": "^7.0.2",
